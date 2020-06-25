@@ -2,11 +2,35 @@
 
 #仅使用3种模式(1,0,-1,由所在段斜率决定)，且不进行规范化操作
 #使用知乎中的例子https://zhuanlan.zhihu.com/p/69170491
-S1=[[5,0],[6,1],[4.5,2],[3,3],[3,4.5]]#y值,t值
-S2=[[2,0],[4,1],[6,2],[5,3],[4,4.5]]
+#S1=[[5,0],[6,1],[4.5,2],[3,3],[3,4.5]]#y值,t值
+#S2=[[2,0],[4,1],[6,2],[5,3],[4,4.5]]
 """#根据总的分割点确定两个模式序列
 s1=[[1,1],[-1,2],[-1,3],[0,4.5]]
 s2=[[1,1],[1,2],[-1,3],[-1,4.5]]"""
+
+#2020年上半年某几支股票开盘价
+import datetime
+import pandas as pd
+def days(str1,str2):#计算时间差
+    date1=datetime.datetime.strptime(str1[0:10],"%Y-%m-%d")#共10位
+    date2=datetime.datetime.strptime(str2[0:10],"%Y-%m-%d")
+    num=(date1-date2).days
+    return num
+time_lst=[]
+data=pd.read_excel('./huaxia.xlsx',skiprows=111,header=None)#忽略0-111索引行
+data1=pd.read_excel('./pufa.xlsx',skiprows=111,header=None)#忽略0-111索引行
+data2=pd.read_excel('./tongrentang.xlsx',skiprows=111,header=None)#忽略0-111索引行
+for i in data[0].astype('str').values:
+    t=days(i,'2020-01-02')
+    time_lst.append(t)
+print(time_lst)
+S1=[]
+S2=[]
+for y,y1,t in zip(data[1].values,data2[1].values,time_lst):#比较各股票开盘价
+    S1.append([y,t])#华夏与同仁堂shape_distance 27.919999999999945，shape_dis1 1.150617283950617
+    S2.append([y1,t])#华夏与浦发shape_distance 6.450000000000006，shape_dis1 0.10344827586206917
+
+
 #计算模式值并计算shape_distance
 dis=0
 for i in range(1,len(S1)):#累加每一段结果
